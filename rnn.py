@@ -1,14 +1,14 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Embedding, LSTM, Dense, Dropout
-from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.layers import Embedding, LSTM, Dense, Dropout
+from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from sklearn.model_selection import train_test_split
+from sentence_transformers import SentenceTransformer, util
 
-# Sample data (replace this with your actual dataset)
 movie_synopses = [...]  # List of movie synopses
-release_dates = [...]   # List of release dates
+release_dates = [...]   # List of release dates 
 genres = [...]          # List of genres
 languages = [...]       # List of languages
 keywords = [...]        # List of corresponding keywords
@@ -56,3 +56,6 @@ model.fit(X_train, y_train, epochs=10, batch_size=32, validation_split=0.2)
 # Evaluate the model
 loss, accuracy = model.evaluate(X_test, y_test)
 print("Test Accuracy:", accuracy)
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
