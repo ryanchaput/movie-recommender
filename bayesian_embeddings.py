@@ -4,6 +4,7 @@ from sklearn.decomposition import PCA
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+import torch
 
 # Load the movies dataset
 data = pd.read_csv('movies_metadata.csv', low_memory=False)
@@ -15,15 +16,17 @@ data.dropna(subset=['overview'], inplace=True)
 # Simplify genres into a single column if necessary
 data['genres'] = data['genres'].apply(lambda x: eval(x)[0]['name'] if x != '[]' else None)
 data.dropna(subset=['genres'], inplace=True)
-
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
 # Initialize the sentence transformer model for embeddings
-model = SentenceTransformer('all-MiniLM-L6-v2')
+model = SentenceTransformer('all-MiniLM-L6-v2').to(device)
 
 # Generate embeddings for the overview text
-data['embeddings'] = data['overview'].apply(lambda x: model.encode(x))
+synopsis = data['overview'].astype(str).values
+movies_embeddings = model.encode(synopsis, show_progress_bar=True)
+data['embeddings'] = movies_embeddings.tolist()
 
 # Since embeddings are high-dimensional, reduce them using PCA for Naive Bayes
-pca = PCA(n_components=50)  # Adjust components based on variance explained
+pca = PCA(n_components=100)  # Adjust components based on variance explained
 X = pca.fit_transform(list(data['embeddings']))
 y = data['genres'].values
 
