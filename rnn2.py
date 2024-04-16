@@ -62,11 +62,16 @@ loss, accuracy = model.evaluate(X_test_reshaped, y_test)
 print('Test Loss:', loss)
 print('Test Accuracy:', accuracy)
 
-# Make predictions
-text_input = "A thrilling science fiction movie set in a dystopian future"
-input_embedding = sbert_model.encode([text_input])
-input_reshaped = input_embedding.reshape(1, 1, input_embedding.shape[1])
-predicted_label = model.predict(input_reshaped)
-predicted_movie = label_encoder.inverse_transform([predicted_label.argmax()])
-print('Predicted Movie:', predicted_movie)
-print('Predicted Movie Overview:', df[df['title'] == predicted_movie[0]]['overview'].values[0])
+while True:
+    text_input = input("Enter a movie description (or 'quit' to exit): ")
+    
+    if text_input.lower() == 'quit':
+        break
+    
+    input_embedding = sbert_model.encode([text_input])
+    input_reshaped = input_embedding.reshape(1, 1, input_embedding.shape[1])
+    predicted_label = model.predict(input_reshaped)
+    predicted_movie = label_encoder.inverse_transform([predicted_label.argmax()])
+    print('Predicted Movie:', predicted_movie)
+    print('Predicted Movie Overview:', df[df['title'] == predicted_movie[0]]['overview'].values[0])
+    print()
